@@ -46,7 +46,7 @@ class BaseOutput(BaseUi):
         obj = func(*agrg, **kwarg)
         if hasattr(self, 'style'):
             obj.style(self.style)
-        if hasattr(self, 'onclick'):
+        if hasattr(self, 'on_click'):
             obj.onclick(self.onclick)
         return obj
 
@@ -101,7 +101,7 @@ class BaseOutput(BaseUi):
         self.style = style
     
     def set_onclick(self, onclick):
-        self.onclick = onclick
+        self.on_click = onclick
 
 
 class BaseNotice(BaseUi):
@@ -153,10 +153,10 @@ class BaseLayout(BaseUi):
 
 
 class Scope(BaseOutput):
-    def __init__(self, name: str, content=[], scope=None, position=OutputPosition.BOTTOM):
+    def __init__(self, name: str, content: list = None, scope=None, position=OutputPosition.BOTTOM):
         self.kw = locals()
         self.name = name
-        self.content = content
+        self.content = content or []
         self.scope = scope
         self.position = position
 
@@ -182,7 +182,8 @@ class Scope(BaseOutput):
         return use_scope(name, clear, **kwargs)
 
     @classmethod
-    def put_scope(cls, name, content=[], scope=None, position: int = -1):
+    def put_scope(cls, name, content: list = None, scope=None, position: int = -1):
+        content = content or []
         return put_scope(name, content, scope, position)
 
     @classmethod
@@ -394,7 +395,6 @@ class Button(BaseOutput):
         scope=None,
         position=OutputPosition.BOTTOM,
     ):
-        put_button()
         self.kw = locals()
         self.label = label
         self.onclick = onclick
@@ -430,7 +430,6 @@ class ButtonGroup(BaseOutput):
         self.scope = scope
         self.position = position
         self.callback_options = callback_options
-        put_buttons()
 
 
 class Image(BaseOutput):
@@ -501,7 +500,7 @@ class Collapse(BaseOutput):
 class Scrollable(BaseOutput):
     def __init__(
         self,
-        content=[],
+        content: list = None,
         height=400,
         keep_bottom=False,
         border=True,
@@ -518,6 +517,22 @@ class Scrollable(BaseOutput):
         self.position = position
         self.kwargs = kwargs
 
+    def show(self):
+        self.content = list(map(self.ui_to_show, self.content))
+        return super().show()
+
+    def add_content(self, *content):
+        if isinstance(content, tuple):
+            self.content += list(content)
+        else:
+            self.content.append(content)
+
+    def remove_content(self, *content):
+        if isinstance(content, tuple):
+            for c in content:
+                self.content.remove(c)
+        else:
+            self.content.remove(content)
 
 class Widget(BaseOutput):
     def __init__(self, template, data, scope=None, position=OutputPosition.BOTTOM):
@@ -544,14 +559,14 @@ class Popup(BaseNotice):
     def __init__(
         self,
         title,
-        content=None,
+        content: list=None,
         size=PopupSize.NORMAL,
         implicit_close=True,
         closable=True,
     ):
         self.kw = locals()
         self.title = title
-        self.content = content
+        self.content = content or []
         self.size = size
         self.implicit_close = implicit_close
         self.closable = closable
@@ -560,13 +575,29 @@ class Popup(BaseNotice):
     def close(cls):
         return close_popup()
 
+    def show(self):
+        self.content = list(map(self.ui_to_show, self.content))
+        return super().show()
+
+    def add_content(self, *content):
+        if isinstance(content, tuple):
+            self.content += list(content)
+        else:
+            self.content.append(content)
+
+    def remove_content(self, *content):
+        if isinstance(content, tuple):
+            for c in content:
+                self.content.remove(c)
+        else:
+            self.content.remove(content)
 
 class Row(BaseLayout):
     def __init__(
-        self, content=[], size=None, scope=None, position=OutputPosition.BOTTOM
+        self, content: list = None, size=None, scope=None, position=OutputPosition.BOTTOM
     ):
         self.kw = locals()
-        self.content = content
+        self.content = content or []
         self.size = size
         self.scope = scope
         self.position = position
@@ -574,10 +605,10 @@ class Row(BaseLayout):
 
 class Column(BaseLayout):
     def __init__(
-        self, content=[], size=None, scope=None, position=OutputPosition.BOTTOM
+        self, content: list = None, size=None, scope=None, position=OutputPosition.BOTTOM
     ):
         self.kw = locals()
-        self.content = content
+        self.content = content or []
         self.size = size
         self.scope = scope
         self.position = position
@@ -586,7 +617,7 @@ class Column(BaseLayout):
 class Grid(BaseLayout):
     def __init__(
         self,
-        content,
+        content: list,
         cell_width="auto",
         cell_height="auto",
         cell_widths=None,
@@ -596,7 +627,7 @@ class Grid(BaseLayout):
         position=OutputPosition.BOTTOM,
     ):
         self.kw = locals()
-        self.content = content
+        self.content = content or []
         self.cell_width = cell_width
         self.cell_height = cell_height
         self.cell_widths = cell_widths

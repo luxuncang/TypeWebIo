@@ -1,12 +1,10 @@
-from ast import Raise
-from numpy import put_along_axis
 from pywebio import pin as pwpin
 from pywebio.pin import *
 from pywebio.pin import OutputPosition
 
 from .baseui import BaseUi
 
-__all__ = ["BasePin", "PinInput", "PinTextarea", "PinSelect", "PinCheckbox", "PinRadio", "PinSlider", "PinActions"]
+__all__ = ["BasePin", "PinInput", "PinTextarea", "PinSelect", "PinCheckbox", "PinRadio", "PinSlider", "PinActions", "pin"]
 
 class BasePin(BaseUi):
     def show(self):
@@ -15,7 +13,7 @@ class BasePin(BaseUi):
         obj = func(*agrg, **kwarg)
         if hasattr(self, 'style'):
             obj.style(self.style)
-        if hasattr(self, 'onclick'):
+        if hasattr(self, 'on_click'):
             obj.onclick(self.onclick)
         return obj
 
@@ -23,21 +21,26 @@ class BasePin(BaseUi):
     def uitype(self):
         cls_naem = self.__class__.__name__
         if cls_naem == "PinInput":
-            return "pin_input"
+            return "put_input"
         elif cls_naem == "PinTextarea":
-            return "pin_textarea"
+            return "put_textarea"
         elif cls_naem == "PinSelect":
-            return "pin_select"
+            return "put_select"
         elif cls_naem == "PinCheckbox":
-            return "pin_checkbox"
+            return "put_checkbox"
         elif cls_naem == "PinRadio":
-            return "pin_radio"
+            return "put_radio"
         elif cls_naem == "PinSlider":
-            return "pin_slider"
+            return "put_slider"
         elif cls_naem == "PinActions":
-            return "pin_actions"
+            return "put_actions"
         raise Exception("Unknown type")
 
+    def set_style(self, style):
+        self.style = style
+    
+    def set_onclick(self, onclick):
+        self.on_click = onclick
 
 class PinInput(BasePin):
     def __init__(
