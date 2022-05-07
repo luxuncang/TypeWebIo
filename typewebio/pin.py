@@ -22,17 +22,17 @@ class BasePin(BaseUi):
         cls_naem = self.__class__.__name__
         if cls_naem == "PinInput":
             return "put_input"
-        elif cls_naem == "PinTextarea":
+        if cls_naem == "PinTextarea":
             return "put_textarea"
-        elif cls_naem == "PinSelect":
+        if cls_naem == "PinSelect":
             return "put_select"
-        elif cls_naem == "PinCheckbox":
+        if cls_naem == "PinCheckbox":
             return "put_checkbox"
-        elif cls_naem == "PinRadio":
+        if cls_naem == "PinRadio":
             return "put_radio"
-        elif cls_naem == "PinSlider":
+        if cls_naem == "PinSlider":
             return "put_slider"
-        elif cls_naem == "PinActions":
+        if cls_naem == "PinActions":
             return "put_actions"
         raise Exception("Unknown type")
 

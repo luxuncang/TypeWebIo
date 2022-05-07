@@ -55,45 +55,45 @@ class BaseOutput(BaseUi):
         cls_naem = self.__class__.__name__
         if cls_naem == "Scope":
             return "put_scope"
-        elif cls_naem == "Text":
+        if cls_naem == "Text":
             return "put_text"
-        elif cls_naem == "Markdown":
+        if cls_naem == "Markdown":
             return "put_markdown"
-        elif cls_naem == "Info":
+        if cls_naem == "Info":
             return "put_info"
-        elif cls_naem == "Success":
+        if cls_naem == "Success":
             return "put_success"
-        elif cls_naem == "Warn":
+        if cls_naem == "Warn":
             return "put_warning"
-        elif cls_naem == "Error":
+        if cls_naem == "Error":
             return "put_error"
-        elif cls_naem == "Html":
+        if cls_naem == "Html":
             return "put_html"
-        elif cls_naem == "Link":
+        if cls_naem == "Link":
             return "put_link"
-        elif cls_naem == "Processbar":
+        if cls_naem == "Processbar":
             return "put_processbar"
-        elif cls_naem == "Loading":
+        if cls_naem == "Loading":
             return "put_loading"
-        elif cls_naem == "Code":
+        if cls_naem == "Code":
             return "put_code"
-        elif cls_naem == "Table":
+        if cls_naem == "Table":
             return "put_table"
-        elif cls_naem == "Span":
+        if cls_naem == "Span":
             return "put_span"
-        elif cls_naem == "Button":
+        if cls_naem == "Button":
             return "put_button"
-        elif cls_naem == "ButtonGroup":
+        if cls_naem == "ButtonGroup":
             return "put_buttons"
-        elif cls_naem == "Image":
+        if cls_naem == "Image":
             return "put_image"
-        elif cls_naem == "File":
+        if cls_naem == "File":
             return "put_file"
-        elif cls_naem == "Tabs":
+        if cls_naem == "Tabs":
             return "put_tabs"
-        elif cls_naem == "Collapse":
+        if cls_naem == "Collapse":
             return "put_collapse"
-        elif cls_naem == "Widget":
+        if cls_naem == "Widget":
             return "put_widget"
         raise Exception("Unknown type")
 
@@ -115,7 +115,7 @@ class BaseNotice(BaseUi):
         cls_naem = self.__class__.__name__
         if cls_naem == "Toast":
             return "toast"
-        elif cls_naem == "Popup":
+        if cls_naem == "Popup":
             return "popup"
         raise Exception("Unknown type")
 
@@ -487,15 +487,27 @@ class Tabs(BaseOutput):
 
 class Collapse(BaseOutput):
     def __init__(
-        self, title, content=[], open=False, scope=None, position=OutputPosition.BOTTOM
+        self, title, content: list, open=False, scope=None, position=OutputPosition.BOTTOM
     ):
         self.kw = locals()
         self.title = title
-        self.content = content
+        self.content = content or []
         self.open = open
         self.scope = scope
         self.position = position
 
+    def add_content(self, *content):
+        if isinstance(content, tuple):
+            self.content += list(content)
+        else:
+            self.content.append(content)
+
+    def remove_content(self, *content):
+        if isinstance(content, tuple):
+            for c in content:
+                self.content.remove(c)
+        else:
+            self.content.remove(content)
 
 class Scrollable(BaseOutput):
     def __init__(

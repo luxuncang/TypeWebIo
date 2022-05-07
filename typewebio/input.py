@@ -30,21 +30,21 @@ class BaseInput(BaseUi):
         cls_naem = self.__class__.__name__
         if cls_naem == "Input":
             return "input"
-        elif cls_naem == "Textarea":
+        if cls_naem == "Textarea":
             return "textarea"
-        elif cls_naem == "Select":
+        if cls_naem == "Select":
             return "select"
-        elif cls_naem == "Checkbox":
+        if cls_naem == "Checkbox":
             return "checkbox"
-        elif cls_naem == "Radio":
+        if cls_naem == "Radio":
             return "radio"
-        elif cls_naem == "Slider":
+        if cls_naem == "Slider":
             return "slider"
-        elif cls_naem == "Actions":
+        if cls_naem == "Actions":
             return "actions"
-        elif cls_naem == "FileUpload":
+        if cls_naem == "FileUpload":
             return "file_upload"
-        elif cls_naem == "InputGroup":
+        if cls_naem == "InputGroup":
             return "input_group"
         raise Exception("Unknown type")
 

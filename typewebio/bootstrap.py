@@ -37,7 +37,6 @@ class Nav(Bootstrap, Widget):
     def __init__(self, menus: List[NavLink]):
         self.menus = menus
         self.data = {}
-        # self.widget = Widget(self.template, self.data)
 
     def show(self):
         self.data = {'menus': list(map(self.ui_to_show, self.menus))}
