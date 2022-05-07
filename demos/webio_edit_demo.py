@@ -2,8 +2,6 @@ from typewebio import *
 from pywebio import start_server
 from functools import partial
 
-from pywebio.output import *
-
 
 async def run_code():
     code = await pin.code
