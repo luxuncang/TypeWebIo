@@ -145,9 +145,9 @@ class BaseLayout(BaseUi):
         cls_naem = self.__class__.__name__
         if cls_naem == "Row":
             return "put_row"
-        elif cls_naem == "Column":
+        if cls_naem == "Column":
             return "put_column"
-        elif cls_naem == "Grid":
+        if cls_naem == "Grid":
             return "put_grid"
         raise Exception("Unknown type")
 
@@ -480,7 +480,7 @@ class Tabs(BaseOutput):
     def tab_to_dict(self, tab):
         if isinstance(tab, dict):
             return tab
-        elif isinstance(tab, tuple):
+        if isinstance(tab, tuple):
             return {"label": tab[0], "content": tab[1]}
         raise ValueError("Tabs must be a list of dict or tuple")
 
