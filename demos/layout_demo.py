@@ -28,10 +28,13 @@ from pywebio import start_server
 
 def layout_demo():
     r = Row()
+    r.set_style("border:1px solid red")
     r.add_content(Code('B1'), None, Code('B2'), None, Code('B3'))
     l = Column()
+    l.set_style("border:1px solid blue")
     l.add_content(Code('A'), r, Code('C'))
     m_r = Row()
+    m_r.set_style("border:1px solid green")
     m_r.add_content(l, None, Code('D'), None, Code('E'))
 
     return m_r
