@@ -6,6 +6,7 @@ class Session:
 
     local = local
     info = info
+    hold = hold
 
     @classmethod
     def download(cls, name: str, content: bytes):

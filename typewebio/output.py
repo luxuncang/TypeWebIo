@@ -44,9 +44,9 @@ class BaseOutput(BaseUi):
         func = getattr(pwoutput, self.uitype)
         agrg, kwarg = self.general_parameters(func, self.get_kw())
         obj = func(*agrg, **kwarg)
-        if hasattr(self, 'style'):
+        if hasattr(self, "style"):
             obj.style(self.style)
-        if hasattr(self, 'on_click'):
+        if hasattr(self, "on_click"):
             obj.onclick(self.onclick)
         return obj
 
@@ -99,7 +99,7 @@ class BaseOutput(BaseUi):
 
     def set_style(self, style):
         self.style = style
-    
+
     def set_onclick(self, onclick):
         self.on_click = onclick
 
@@ -138,7 +138,12 @@ class BaseLayout(BaseUi):
         self.content = list(map(self.ui_to_show, self.content))
         func = getattr(pwoutput, self.uitype)
         agrg, kwarg = self.general_parameters(func, self.get_kw())
-        return func(*agrg, **kwarg)
+        obj = func(*agrg, **kwarg)
+        if hasattr(self, "style"):
+            obj.style(self.style)
+        if hasattr(self, "on_click"):
+            obj.onclick(self.onclick)
+        return obj
 
     @property
     def uitype(self):
@@ -151,9 +156,21 @@ class BaseLayout(BaseUi):
             return "put_grid"
         raise Exception("Unknown type")
 
+    def set_style(self, style):
+        self.style = style
+
+    def set_onclick(self, onclick):
+        self.on_click = onclick
+
 
 class Scope(BaseOutput):
-    def __init__(self, name: str, content: list = None, scope=None, position=OutputPosition.BOTTOM):
+    def __init__(
+        self,
+        name: str,
+        content: list = None,
+        scope=None,
+        position=OutputPosition.BOTTOM,
+    ):
         self.kw = locals()
         self.name = name
         self.content = content or []
@@ -487,7 +504,12 @@ class Tabs(BaseOutput):
 
 class Collapse(BaseOutput):
     def __init__(
-        self, title, content: list, open=False, scope=None, position=OutputPosition.BOTTOM
+        self,
+        title,
+        content: list,
+        open=False,
+        scope=None,
+        position=OutputPosition.BOTTOM,
     ):
         self.kw = locals()
         self.title = title
@@ -508,6 +530,7 @@ class Collapse(BaseOutput):
                 self.content.remove(c)
         else:
             self.content.remove(content)
+
 
 class Scrollable(BaseOutput):
     def __init__(
@@ -546,6 +569,7 @@ class Scrollable(BaseOutput):
         else:
             self.content.remove(content)
 
+
 class Widget(BaseOutput):
     def __init__(self, template, data, scope=None, position=OutputPosition.BOTTOM):
         self.kw = locals()
@@ -571,7 +595,7 @@ class Popup(BaseNotice):
     def __init__(
         self,
         title,
-        content: list=None,
+        content: list = None,
         size=PopupSize.NORMAL,
         implicit_close=True,
         closable=True,
@@ -604,9 +628,14 @@ class Popup(BaseNotice):
         else:
             self.content.remove(content)
 
+
 class Row(BaseLayout):
     def __init__(
-        self, content: list = None, size=None, scope=None, position=OutputPosition.BOTTOM
+        self,
+        content: list = None,
+        size=None,
+        scope=None,
+        position=OutputPosition.BOTTOM,
     ):
         self.kw = locals()
         self.content = content or []
@@ -617,7 +646,11 @@ class Row(BaseLayout):
 
 class Column(BaseLayout):
     def __init__(
-        self, content: list = None, size=None, scope=None, position=OutputPosition.BOTTOM
+        self,
+        content: list = None,
+        size=None,
+        scope=None,
+        position=OutputPosition.BOTTOM,
     ):
         self.kw = locals()
         self.content = content or []
