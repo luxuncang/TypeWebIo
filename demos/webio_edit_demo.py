@@ -5,16 +5,16 @@ from functools import partial
 
 async def run_code():
     code = await pin.code
-    with Scope.use_scope("web"):
+    with Scope.use_scope("webio_edit_demo_web"):
         exec(code)
 
 
 def edit_demo():
 
     # Create the main layoutthe main layout
-    main = Scope("main")
-    web = Scope("web")
-    edit = Scope("edit")
+    main = Scope("webio_edit_demo_main")
+    web = Scope("webio_edit_demo_web")
+    edit = Scope("webio_edit_demo_edit")
     mc = Row([web, None, edit], size="50% 1% 49%")
     main.add_content(mc)
 
@@ -30,7 +30,7 @@ def edit_demo():
     )
 
     edit.add_content(
-        ButtonGroup(["Run", "Clear"], [run_code, partial(Scope.clear, "web")])
+        ButtonGroup(["Run", "Clear"], [run_code, partial(Scope.clear, "webio_edit_demo_web")])
     )
 
     # Create Web layout

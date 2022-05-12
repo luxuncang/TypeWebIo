@@ -1,4 +1,5 @@
 from typing import List, Tuple, Union
+from copy import copy
 
 from pywebio import output as pwoutput
 from pywebio.output import *
@@ -103,6 +104,10 @@ class BaseOutput(BaseUi):
     def set_onclick(self, onclick):
         self.on_click = onclick
 
+    def update_data(self, name, value):
+        if hasattr(self, name):
+            setattr(self, name, value)
+
 
 class BaseNotice(BaseUi):
     def show(self):
@@ -123,19 +128,19 @@ class BaseNotice(BaseUi):
 class BaseLayout(BaseUi):
     def add_content(self, *content):
         if isinstance(content, tuple):
-            self.content += list(content)
+            self._content += list(content)
         else:
-            self.content.append(content)
+            self._content.append(content)
 
     def remove_content(self, *content):
         if isinstance(content, tuple):
             for c in content:
-                self.content.remove(c)
+                self._content.remove(c)
         else:
-            self.content.remove(content)
+            self._content.remove(content)
 
     def show(self):
-        self.content = list(map(self.ui_to_show, self.content))
+        self.content = list(map(self.ui_to_show, self.get_content()))
         func = getattr(pwoutput, self.uitype)
         agrg, kwarg = self.general_parameters(func, self.get_kw())
         obj = func(*agrg, **kwarg)
@@ -162,6 +167,9 @@ class BaseLayout(BaseUi):
     def set_onclick(self, onclick):
         self.on_click = onclick
 
+    def get_content(self):
+        return self._content
+
 
 class Scope(BaseOutput):
     def __init__(
@@ -174,25 +182,29 @@ class Scope(BaseOutput):
         self.kw = locals()
         self.name = name
         self.content = content or []
+        self._content = copy(content) or []
         self.scope = scope
         self.position = position
 
     def show(self):
-        self.content = list(map(self.ui_to_show, self.content))
+        self.content = list(map(self.ui_to_show, self.get_content()))
         return super().show()
 
     def add_content(self, *content):
         if isinstance(content, tuple):
-            self.content += list(content)
+            self._content += list(content)
         else:
-            self.content.append(content)
+            self._content.append(content)
 
     def remove_content(self, *content):
         if isinstance(content, tuple):
             for c in content:
-                self.content.remove(c)
+                self._content.remove(c)
         else:
-            self.content.remove(content)
+            self._content.remove(content)
+
+    def get_content(self):
+        return self._content
 
     @classmethod
     def use_scope(cls, name=None, clear=False, **kwargs):
@@ -514,22 +526,23 @@ class Collapse(BaseOutput):
         self.kw = locals()
         self.title = title
         self.content = content or []
+        self._content = copy(content) or []
         self.open = open
         self.scope = scope
         self.position = position
 
     def add_content(self, *content):
         if isinstance(content, tuple):
-            self.content += list(content)
+            self._content += list(content)
         else:
-            self.content.append(content)
+            self._content.append(content)
 
     def remove_content(self, *content):
         if isinstance(content, tuple):
             for c in content:
-                self.content.remove(c)
+                self._content.remove(c)
         else:
-            self.content.remove(content)
+            self._content.remove(content)
 
 
 class Scrollable(BaseOutput):
@@ -544,7 +557,8 @@ class Scrollable(BaseOutput):
         **kwargs
     ):
         self.kw = locals()
-        self.content = content
+        self.content = content or []
+        self._content = deepcopy(content)
         self.height = height
         self.keep_bottom = keep_bottom
         self.border = border
@@ -553,28 +567,31 @@ class Scrollable(BaseOutput):
         self.kwargs = kwargs
 
     def show(self):
-        self.content = list(map(self.ui_to_show, self.content))
+        self.content = list(map(self.ui_to_show, self.get_content()))
         return super().show()
 
     def add_content(self, *content):
         if isinstance(content, tuple):
-            self.content += list(content)
+            self._content += list(content)
         else:
-            self.content.append(content)
+            self._content.append(content)
 
     def remove_content(self, *content):
         if isinstance(content, tuple):
             for c in content:
-                self.content.remove(c)
+                self._content.remove(c)
         else:
-            self.content.remove(content)
+            self._content.remove(content)
+
+    def get_content(self):
+        return self._content
 
 
 class Widget(BaseOutput):
-    def __init__(self, template, data, scope=None, position=OutputPosition.BOTTOM):
+    def __init__(self, template, data = None, scope=None, position=OutputPosition.BOTTOM):
         self.kw = locals()
         self.template = template
-        self.data = data
+        self.data = data or {}
         self.scope = scope
         self.position = position
 
@@ -603,6 +620,7 @@ class Popup(BaseNotice):
         self.kw = locals()
         self.title = title
         self.content = content or []
+        self._content = copy(content) or []
         self.size = size
         self.implicit_close = implicit_close
         self.closable = closable
@@ -612,22 +630,24 @@ class Popup(BaseNotice):
         return close_popup()
 
     def show(self):
-        self.content = list(map(self.ui_to_show, self.content))
+        self.content = list(map(self.ui_to_show, self.get_content()))
         return super().show()
 
     def add_content(self, *content):
         if isinstance(content, tuple):
-            self.content += list(content)
+            self._content += list(content)
         else:
-            self.content.append(content)
+            self._content.append(content)
 
     def remove_content(self, *content):
         if isinstance(content, tuple):
             for c in content:
-                self.content.remove(c)
+                self._content.remove(c)
         else:
-            self.content.remove(content)
+            self._content.remove(content)
 
+    def get_content(self):
+        return self._content
 
 class Row(BaseLayout):
     def __init__(
@@ -639,6 +659,7 @@ class Row(BaseLayout):
     ):
         self.kw = locals()
         self.content = content or []
+        self._content = copy(content) or []
         self.size = size
         self.scope = scope
         self.position = position
@@ -654,6 +675,7 @@ class Column(BaseLayout):
     ):
         self.kw = locals()
         self.content = content or []
+        self._content = copy(content) or []
         self.size = size
         self.scope = scope
         self.position = position
@@ -673,6 +695,7 @@ class Grid(BaseLayout):
     ):
         self.kw = locals()
         self.content = content or []
+        self._content = copy(content) or []
         self.cell_width = cell_width
         self.cell_height = cell_height
         self.cell_widths = cell_widths

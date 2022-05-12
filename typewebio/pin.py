@@ -4,7 +4,7 @@ from pywebio.pin import OutputPosition
 
 from .baseui import BaseUi
 
-__all__ = ["BasePin", "PinInput", "PinTextarea", "PinSelect", "PinCheckbox", "PinRadio", "PinSlider", "PinActions", "pin"]
+__all__ = ["BasePin", "PinInput", "PinTextarea", "PinSelect", "PinCheckbox", "PinRadio", "PinSlider", "PinActions", "pin", "pin_wait_change", "pin_update", "pin_on_change"]
 
 class BasePin(BaseUi):
     def show(self):
@@ -15,6 +15,8 @@ class BasePin(BaseUi):
             obj.style(self.style)
         if hasattr(self, 'on_click'):
             obj.onclick(self.onclick)
+        if hasattr(self, 'on_change'):
+            pin_on_change(self.name, self.on_change)
         return obj
 
     @property
@@ -42,6 +44,9 @@ class BasePin(BaseUi):
     def set_onclick(self, onclick):
         self.on_click = onclick
 
+    def set_on_change(self, func):
+        self.on_change = func
+
 class PinInput(BasePin):
     def __init__(
         self,
@@ -68,7 +73,7 @@ class PinInput(BasePin):
         self.help_text = help_text
         self.scope = scope
         self.position = position
-
+        
 
 class PinTextarea(BasePin):
     def __init__(
