@@ -31,6 +31,7 @@ __all__ = [
     "File",
     "Tabs",
     "Collapse",
+    "Scrollable"
     "Toast",
     "Popup",
     "Row",
