@@ -93,6 +93,8 @@ class BaseOutput(BaseUi):
             return "put_file"
         if cls_naem == "Tabs":
             return "put_tabs"
+        if cls_naem == "Scrollable":
+            return "put_scrollable"
         if cls_naem == "Collapse":
             return "put_collapse"
         if cls_naem == "Widget":
