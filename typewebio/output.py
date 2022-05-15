@@ -497,21 +497,36 @@ class File(BaseOutput):
 class Tabs(BaseOutput):
     def __init__(
         self,
-        tabs: List[Union[dict, Tuple[str, BaseOutput]]],
+        tabs: List[Tuple[str, BaseOutput]],
         scope=None,
         position=OutputPosition.BOTTOM,
     ):
         self.kw = locals()
-        self.tabs = list(map(self.tab_to_dict, tabs))
+        self.tabs = tabs
+        self._tabs = copy(tabs) or []
         self.scope = scope
         self.position = position
 
-    def tab_to_dict(self, tab):
-        if isinstance(tab, dict):
-            return tab
-        if isinstance(tab, tuple):
-            return {"label": tab[0], "content": tab[1]}
-        raise ValueError("Tabs must be a list of dict or tuple")
+    def show(self):
+        self.tabs = list(
+            map(self.get_tab , zip(self.get_tab_names(), map(self.ui_to_show, self.get_tab_value())))
+        )
+        return super().show()
+
+    def add_tab(self, name, tab):
+        self._tabs.append((name, tab))
+
+    def remove_tab(self, name):
+        self._tabs = list(filter(lambda x: x[0] != name, self._tabs))
+
+    def get_tab_value(self):
+        return map(lambda tab: tab[1], self._tabs)
+
+    def get_tab_names(self):
+        return map(lambda tab: tab[0], self._tabs)
+
+    def get_tab(self, tab: tuple):
+        return {"title": tab[0], "content": tab[1]}
 
 
 class Collapse(BaseOutput):
@@ -558,7 +573,7 @@ class Scrollable(BaseOutput):
     ):
         self.kw = locals()
         self.content = content or []
-        self._content = deepcopy(content)
+        self._content = copy(content)
         self.height = height
         self.keep_bottom = keep_bottom
         self.border = border
@@ -588,7 +603,7 @@ class Scrollable(BaseOutput):
 
 
 class Widget(BaseOutput):
-    def __init__(self, template, data = None, scope=None, position=OutputPosition.BOTTOM):
+    def __init__(self, template, data=None, scope=None, position=OutputPosition.BOTTOM):
         self.kw = locals()
         self.template = template
         self.data = data or {}
@@ -648,6 +663,7 @@ class Popup(BaseNotice):
 
     def get_content(self):
         return self._content
+
 
 class Row(BaseLayout):
     def __init__(
