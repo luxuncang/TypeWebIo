@@ -171,7 +171,9 @@ class BaseLayout(BaseUi):
         self.on_click = onclick
 
     def get_content(self):
-        return self._content
+        if isinstance(self._content, list):
+            return self._content
+        return [self._content]
 
 
 class Scope(BaseOutput):
@@ -207,7 +209,9 @@ class Scope(BaseOutput):
             self._content.remove(content)
 
     def get_content(self):
-        return self._content
+        if isinstance(self._content, list):
+            return self._content
+        return [self._content]
 
     @classmethod
     def use_scope(cls, name=None, clear=False, **kwargs):
@@ -549,6 +553,10 @@ class Collapse(BaseOutput):
         self.scope = scope
         self.position = position
 
+    def show(self):
+        self.content = list(map(self.ui_to_show, self.get_content()))
+        return super().show()
+
     def add_content(self, *content):
         if isinstance(content, tuple):
             self._content += list(content)
@@ -562,6 +570,10 @@ class Collapse(BaseOutput):
         else:
             self._content.remove(content)
 
+    def get_content(self):
+        if isinstance(self._content, list):
+            return self._content
+        return [self._content]
 
 class Scrollable(BaseOutput):
     def __init__(
@@ -602,7 +614,9 @@ class Scrollable(BaseOutput):
             self._content.remove(content)
 
     def get_content(self):
-        return self._content
+        if isinstance(self._content, list):
+            return self._content
+        return [self._content]
 
 
 class Widget(BaseOutput):
@@ -665,7 +679,9 @@ class Popup(BaseNotice):
             self._content.remove(content)
 
     def get_content(self):
-        return self._content
+        if isinstance(self._content, list):
+            return self._content
+        return [self._content]
 
 
 class Row(BaseLayout):
