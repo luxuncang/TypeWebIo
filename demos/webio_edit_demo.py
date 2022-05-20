@@ -38,12 +38,6 @@ def edit_demo():
     return main
 
 
-app = edit_demo()
-
-
-async def main_typewebio():
-    Session.set_env(output_max_width="100%")
-    app.show()
-
-
-start_server(main_typewebio, port=8080, debug=True)
+app = TypeWebIo("webio_edit_demo")
+app.add_content(edit_demo())
+app.run()
