@@ -49,7 +49,7 @@ class Session:
     def add_head(cls, url: str):
         """<script src="https://unpkg.com/element-ui/lib/index.js"></script>"""
         # return cls.run_js(f"""$('head').append('{url}')""")
-        return cls.run_js(f"""$('head').append(url)""", url=url)
+        return cls.run_js("""$('head').append(url)""", url=url)
 
     @classmethod
     def add_body(cls, code: str):
