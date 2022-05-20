@@ -588,7 +588,7 @@ class Scrollable(BaseOutput):
     ):
         self.kw = locals()
         self.content = content or []
-        self._content = copy(content)
+        self._content = copy(content) or []
         self.height = height
         self.keep_bottom = keep_bottom
         self.border = border

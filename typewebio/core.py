@@ -58,7 +58,7 @@ class TypeWebIo(Session):
         self,
         port=8080,
         host="127.0.0.1",
-        cdn=True,
+        cdn=False,
         static_dir=None,
         remote_access=False,
         debug=False,
