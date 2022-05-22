@@ -12,6 +12,12 @@ _Write interactive web app in declaration way._
 
 </div>
 
+## **安装**
+
+```bash
+pip install typewebio
+```
+
 ## **特性**
 
 * 声明式UI
@@ -73,8 +79,6 @@ start_server(main_typewebio, port=8080, debug=True)
 ### Edit
 
 ```python
-
-
 from typewebio import *
 from pywebio import start_server
 from functools import partial
@@ -124,3 +128,4 @@ start_server(main_typewebio, port=8080, debug=True)
 ![TypeWebIo Edit](./image/README/1652019057851.png)
 
 **注意: 本项目正在快速迭代中**
+
