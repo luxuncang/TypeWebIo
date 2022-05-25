@@ -67,7 +67,6 @@ class Input(BaseInput):
         help_text=None,
         **other_html_attrs
     ):
-        input()
         self.kw = locals()
         self.label = label
         self.type = type
