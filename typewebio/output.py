@@ -2,7 +2,7 @@ from typing import List, Tuple, Union
 from copy import copy
 
 from pywebio import output as pwoutput
-from pywebio.output import *
+from pywebio.output import *  # type: ignore
 from pywebio.output import Position, OutputPosition
 
 from .baseui import BaseUi
@@ -49,7 +49,7 @@ class BaseOutput(BaseUi):
         if hasattr(self, "style"):
             obj.style(self.style)
         if hasattr(self, "on_click"):
-            obj.onclick(self.onclick)
+            obj.onclick(self.onclick)  # type: ignore
         return obj
 
     @property
@@ -130,17 +130,11 @@ class BaseNotice(BaseUi):
 
 class BaseLayout(BaseUi):
     def add_content(self, *content):
-        if isinstance(content, tuple):
-            self._content += list(content)
-        else:
-            self._content.append(content)
+        self._content += list(content)  # type: ignore
 
     def remove_content(self, *content):
-        if isinstance(content, tuple):
-            for c in content:
-                self._content.remove(c)
-        else:
-            self._content.remove(content)
+        for c in content:
+            self._content.remove(c)  # type: ignore
 
     def show(self):
         self.content = list(map(self.ui_to_show, self.get_content()))
@@ -150,7 +144,7 @@ class BaseLayout(BaseUi):
         if hasattr(self, "style"):
             obj.style(self.style)
         if hasattr(self, "on_click"):
-            obj.onclick(self.onclick)
+            obj.onclick(self.onclick)  # type: ignore
         return obj
 
     @property
@@ -171,16 +165,16 @@ class BaseLayout(BaseUi):
         self.on_click = onclick
 
     def get_content(self):
-        if isinstance(self._content, list):
-            return self._content
-        return [self._content]
+        if isinstance(self._content, list):  # type: ignore
+            return self._content  # type: ignore
+        return [self._content]  # type: ignore
 
 
 class Scope(BaseOutput):
     def __init__(
         self,
         name: str,
-        content: list = None,
+        content: list = None,  # type: ignore
         scope=None,
         position=OutputPosition.BOTTOM,
     ):
@@ -196,17 +190,11 @@ class Scope(BaseOutput):
         return super().show()
 
     def add_content(self, *content):
-        if isinstance(content, tuple):
-            self._content += list(content)
-        else:
-            self._content.append(content)
+        self._content += list(content)
 
     def remove_content(self, *content):
-        if isinstance(content, tuple):
-            for c in content:
-                self._content.remove(c)
-        else:
-            self._content.remove(content)
+        for c in content:
+            self._content.remove(c)
 
     def get_content(self):
         if isinstance(self._content, list):
@@ -218,25 +206,25 @@ class Scope(BaseOutput):
         return use_scope(name, clear, **kwargs)
 
     @classmethod
-    def put_scope(cls, name, content: list = None, scope=None, position: int = -1):
+    def put_scope(cls, name, content: list = None, scope=None, position: int = -1):  # type: ignore
         content = content or []
         return put_scope(name, content, scope, position)
 
     @classmethod
-    def get_scope(cls, stack_id: int = None):
+    def get_scope(cls, stack_id: int = None):  # type: ignore
         return get_scope(stack_id)
 
     @classmethod
-    def clear(cls, scope: str = None):
+    def clear(cls, scope: str = None):  # type: ignore
         return clear(scope)
 
     @classmethod
-    def remove(cls, scope: str = None):
+    def remove(cls, scope: str = None):  # type: ignore
         return remove(scope)
 
     @classmethod
-    def scroll_to(cls, scope: str = None, position: Position = Position.TOP):
-        return scroll_to(scope, position)
+    def scroll_to(cls, scope: str = None, position: Position = Position.TOP):  # type: ignore
+        return scroll_to(scope, position)  # type: ignore
 
 
 class Text(BaseOutput):
@@ -389,7 +377,7 @@ class Code(BaseOutput):
         self,
         content,
         language="",
-        rows: str = None,
+        rows: str = None,  # type: ignore
         scope=None,
         position=OutputPosition.BOTTOM,
     ):
@@ -404,10 +392,37 @@ class Code(BaseOutput):
 class Table(BaseOutput):
     def __init__(self, tdata, header=None, scope=None, position=OutputPosition.BOTTOM):
         self.kw = locals()
-        self.tdata = tdata
-        self.header = header
+        self.tdata = tdata or []
+        self._tdata = tdata or []
+        self.header = header or []
+        self._header = header or []
         self.scope = scope
         self.position = position
+
+    def show(self):
+        self.tdata = [list(map(self.ui_to_show, i)) for i in self.get_tdata()]
+        self.header = list(map(self.ui_to_show, self.get_header()))
+        return super().show()
+
+    def get_tdata(self):
+        return self._tdata
+
+    def get_header(self):
+        return self._header
+
+    def add_tdata(self, *tdata):
+        self._tdata += list(tdata)
+
+    def add_header(self, *header):
+        self._header += list(header)
+
+    def remove_tdata(self, *tdata):
+        for i in tdata:
+            self._tdata.remove(i)
+
+    def remove_header(self, *header):
+        for i in header:
+            self._header.remove(i)
 
 
 class Span(BaseOutput):
@@ -516,7 +531,10 @@ class Tabs(BaseOutput):
 
     def show(self):
         self.tabs = list(
-            map(self.get_tab , zip(self.get_tab_names(), map(self.ui_to_show, self.get_tab_value())))
+            map(
+                self.get_tab,
+                zip(self.get_tab_names(), map(self.ui_to_show, self.get_tab_value())),
+            )
         )
         return super().show()
 
@@ -558,27 +576,22 @@ class Collapse(BaseOutput):
         return super().show()
 
     def add_content(self, *content):
-        if isinstance(content, tuple):
-            self._content += list(content)
-        else:
-            self._content.append(content)
+        self._content += list(content)
 
     def remove_content(self, *content):
-        if isinstance(content, tuple):
-            for c in content:
-                self._content.remove(c)
-        else:
-            self._content.remove(content)
+        for c in content:
+            self._content.remove(c)
 
     def get_content(self):
         if isinstance(self._content, list):
             return self._content
         return [self._content]
 
+
 class Scrollable(BaseOutput):
     def __init__(
         self,
-        content: list = None,
+        content: list = None,  # type: ignore
         height=400,
         keep_bottom=False,
         border=True,
@@ -601,17 +614,11 @@ class Scrollable(BaseOutput):
         return super().show()
 
     def add_content(self, *content):
-        if isinstance(content, tuple):
-            self._content += list(content)
-        else:
-            self._content.append(content)
+        self._content += list(content)
 
     def remove_content(self, *content):
-        if isinstance(content, tuple):
-            for c in content:
-                self._content.remove(c)
-        else:
-            self._content.remove(content)
+        for c in content:
+            self._content.remove(c)
 
     def get_content(self):
         if isinstance(self._content, list):
@@ -644,7 +651,7 @@ class Popup(BaseNotice):
     def __init__(
         self,
         title,
-        content: list = None,
+        content: list = None,  # type: ignore
         size=PopupSize.NORMAL,
         implicit_close=True,
         closable=True,
@@ -666,17 +673,11 @@ class Popup(BaseNotice):
         return super().show()
 
     def add_content(self, *content):
-        if isinstance(content, tuple):
-            self._content += list(content)
-        else:
-            self._content.append(content)
+        self._content += list(content)
 
     def remove_content(self, *content):
-        if isinstance(content, tuple):
-            for c in content:
-                self._content.remove(c)
-        else:
-            self._content.remove(content)
+        for c in content:
+            self._content.remove(c)
 
     def get_content(self):
         if isinstance(self._content, list):
@@ -687,7 +688,7 @@ class Popup(BaseNotice):
 class Row(BaseLayout):
     def __init__(
         self,
-        content: list = None,
+        content: list = None,  # type: ignore
         size=None,
         scope=None,
         position=OutputPosition.BOTTOM,
@@ -703,7 +704,7 @@ class Row(BaseLayout):
 class Column(BaseLayout):
     def __init__(
         self,
-        content: list = None,
+        content: list = None,  # type: ignore
         size=None,
         scope=None,
         position=OutputPosition.BOTTOM,
